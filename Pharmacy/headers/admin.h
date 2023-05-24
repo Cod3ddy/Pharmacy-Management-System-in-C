@@ -1,19 +1,12 @@
-
 void menuOptions(){
-// my code for the menu options
-//	setWindowSize(1000, 500);
+	system("cls");
 	char adminName [100] = "";
 	char space [3] = " ";
-	strcat(adminName, adm.firstName);
-	strcat(adminName, space);
-	strcat(adminName, adm.surname); 
+	setWindowState("Adminstrator");  
+	setWindowSize(1000, 500);
+	setWindowPos();               
 	
-	setWindowState(adminName);                 
-	setWindowSize(900, 500);
-	
-	system("cls");
-	printf("Welcome %s\n\n", adminName); 
-	
+
 	char * men [5] = {"1. Add drugs", "2. View Remaining Drugs", "3. View Sales Records", "4. Manage Users ", "5. logout"};
 	int i =0, option;
 	
@@ -71,21 +64,10 @@ void adminLogin(){
 	if(uflag == 1 && pflag == 1){
 		menuOptions();
 	}else{
-		while(fread(&adm, sizeof(adm),1, fp) !=0){
-			if(strcmp(tempEmailAddress, adm.emailAddress)==0 && strcmp(tempPassword, adm.password) == 0 ){
-				uflag = 2;
-				pflag = 2;
-				break;
-			}
-		}
-		if(uflag == 2 && pflag == 2){
-			menuOptions();
-		}else{
 			system("cls");
 			printf ("Sorry, No account by that Email Address was found\n");
 			system("pause");
 			landingPage();
-		}
 	}
 }
 void addDrugs(){
@@ -294,7 +276,7 @@ void salesRecord(){
 void manageUsers(){
 	system("cls");
 	int option, i ;
-	char *men [5] = {"1. Add admin", "2. Remove Admin", "3. Registered Customers", "4. Admin Login history", "5. Back"};
+	char *men [5] = {"1. Remove Customer", "2. Login history","3. Back"};
 	for (i =0; i < 5; ++i){
 		printf ("%s\n", men[i]);
 	}
@@ -303,25 +285,18 @@ void manageUsers(){
 	
 	switch(option){
 		case 1:{
-			addAdmin();
+			removeCustomer();
 			break;
 		}
 		case 2:{
-			
+			loginHistory();
 			break;
 		}
 		case 3:{
-			
-			break;
-		}
-		case 4:{
-			
-			break;
-		}
-		case 5:{
 			menuOptions();
 			break;
 		}
+	
 		default:{
 			printf ("Invalid option\n");
 			system("pause");
@@ -331,67 +306,12 @@ void manageUsers(){
 	}
 }
 
-void addAdmin(){
-	system("cls");
-	setWindowState("Add admin");
-	char password1 [20];
-	char password2 [20];
-	FILE *fp;
-		fp = fopen("files/admin/adminCredentials.txt", "ab+");
-		if(fp == NULL){
-			printf ("something went wrong");
-		}
-		else{
-		printf("Enter FirstName\n");
-			printf ("::> ");
-			scanf("%s", adm.firstName);
-		printf("Enter Surname\n");
-			printf ("::> ");
-			scanf("%s", adm.surname);
-		printf ("Enter date of Birth\n");
-			printf("::> ");
-			scanf("%s", adm.dateOfBirth);
-		printf("Enter Gender\n");
-			printf ("::> ");
-			scanf("%s", adm.gender);
-		printf ("Enter marital status\n");
-			printf ("::> ");
-			scanf("%s", adm.maritalStatus);
-		printf ("Enter Physical Address\n");
-			printf ("::> ");
-			scanf("%s", adm.address);
-		printf ("Enter Email Address\n");
-			printf ("::> ");
-			scanf("%s", adm.emailAddress);
-		printf ("Enter Phone Number\n");
-			printf ("::> ");
-			scanf("%d", &adm.phoneNumber);
-		printf ("Create password (*must at be 8 characters long)\n");
-			printf ("::> ");
-			scanf("%s", password1);
-			
-			if(strlen(password1) < 8){
-				printf ("\nPassword too short (*must at be 8 characters long\n)");
-				system("pause");
-				registration();
-			}
-		
-		printf ("Confirm  password\n");
-			printf ("::> ");
-			scanf("%s", password2);
-			
-			if(strcmp(password1, password2) == 0){
-				strcat(adm.password, password1);
-				fwrite(&adm, sizeof(adm), 1, fp);
-				fclose(fp);
-				MessageBox(0,"Registered Successfuly", "Registration",0);
-				system("pause");
-				manageUsers();
-			}else{
-				printf ("\nSorry, Passwords don't match\n");
-				system("pause");
-				manageUsers();
-			}
-		}
+void loginHistory(){
+	
 }
+void removeCustomer(){
+	
+}
+
+
 
