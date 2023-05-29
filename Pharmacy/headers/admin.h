@@ -1,4 +1,11 @@
 void menuOptions(){
+// my coloring functions
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+	WORD originalAttributes = consoleInfo.wAttributes;
+
+
 	system("cls");
 	char adminName [100] = "";
 	char space [3] = " ";
@@ -33,6 +40,15 @@ void menuOptions(){
 			manageUsers();
 			break;
 		}
+		case 5: {
+			system("cls");
+			SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+			printf ("Logged out successfully\n");
+			SetConsoleTextAttribute(hConsole, originalAttributes);
+			system("pause");
+			landingPage();
+			break;
+		}
 		default:{
 			printf("Invalid input: please check your input");
 			break;
@@ -41,17 +57,15 @@ void menuOptions(){
 }
 
 void adminLogin(){
+	//admin login auth
 	setWindowSize(900, 500);
 	system("cls");
 	int uflag = 0;
 	int pflag = 0;
 	int i = 0;
 	char *credentials [2] ={"admin@username.com", "admin@password"};
-	char username [30], password [20];
-	
-	FILE *fp;
-		fp = fopen("files/admin/adminCredentials.txt", "rb");
-	
+
+
 	for(i = 0; i < 2; ++i){
 		if(strcmp(tempEmailAddress, credentials[i]) == 0){
 			uflag = 1;
@@ -182,8 +196,9 @@ void viewRemainingDrugs(){
 			printf ("%d", d.price);
 			y++;
 		}
-		
-		printf("\nPress any key to go back..........");
+//		draw an ascii box model 
+		optionsBox(y);
+		options();
 		getche();
 		fclose(fp);
 		menuOptions();
@@ -305,7 +320,159 @@ void manageUsers(){
 		}
 	}
 }
+void optionsBox(int y){
+	int opX = 20, opY = y + 3, l, length= 80, width = 5;
+		pos(19, 7);
+		printf ("%c", 201);
+		pos(100, 7);
+		printf ("%c", 187);
+		pos(19, 13);
+		printf ("%c", 200);
+		pos(100, 13);
+		printf ("%c", 188);
+		
+		for (l = 0; l < length; ++l){
+			pos(opX, opY);
+			printf ("%c", 205);
+			opX++;
+		}
+		
+		opX = 19, opY +=1;
+		for (l =0; l< width; ++l){
+			pos(opX, opY);
+			printf ("%c", 186);
+			opY++;
+		}
+		opX = 100, opY -=5;
+	
+		for (l =0; l< width; ++l){
+			pos(opX, opY);
+			printf ("%c", 186);
+			opY++;
+		}
+		
+		opX =20;
+		for(l =0; l< length; ++l){
+			pos(opX, opY);
+			printf("%c", 205);
+			opX++;
+		}
+		
+}
+void options(){
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+	WORD originalAttributes = consoleInfo.wAttributes;
+	
+	char choice [20];
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	pos(30, 10);
+	printf ("(mod) Modify Drug");
+	SetConsoleTextAttribute(hConsole, originalAttributes);
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED  | FOREGROUND_INTENSITY);
+	pos(70, 10);
+	printf ("(del) Delete Drug");
+	SetConsoleTextAttribute(hConsole, originalAttributes);
+	
+	pos(58, 12);
+	scanf("%s", choice);
+	
+	if (strcmp(choice, "mod") ==0){
+		modifyDrug();
+		
+	}else if(strcmp(choice, "del") == 0){
+		deleteDrug();
+	}else{
+		system("cls");
+		printf("Invalid choice");
+		getche();
+		menuOptions();
+	}
+}
+void modifyDrug(){
+	system ("cls");
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+	WORD originalAttributes = consoleInfo.wAttributes;
+	
+	long int size = sizeof(d);
+	char drugID [10];
+	int flag = 0;
+	printf ("Enter drug ID\n");
+	scanf ("%s", drugID);
+	FILE *fp;
+	fp = fopen("files/pharmacy.txt", "rb+");
+	
+	if (fp == NULL)
+	{
+		printf("something went wrong");
+		exit(0);
+	}
+	else{
+		while(fread(&d, size, 1, fp) !=0){
+			if(strcmp(drugID, d.drugId) == 0){
+				flag = 1;
+				break;
+			}
+		}
+		if(flag == 1){
+			printf ("Enter drug ID\n");
+		scanf("%s", d.drugId);
+		
+		printf ("\nEnter drug name\n");
+		scanf ("%s", d.drugName);
+		
+		printf ("\nEnter manufactured date\n");
+		scanf ("%s", d.manufactureDate);
+		
+		printf ("\nEnter expirely date\n");
+		scanf ("%s", d.expirelyDate);
+	
+		printf ("\nEnter prescription\n");
+			printf("MORNING : ");
+				scanf("%d", &d.p.morning);
+			printf("MIDDAY  : ");
+				scanf("%d", &d.p.midday);
+			printf("EVENING : ");
+				scanf("%d", &d.p.evening);
+		fflush(stdin);
+		printf("\nEnter use\n");
+				gets(d.use);
+				
+		printf ("\nEnter Quantity\n");
+		scanf ("%d", &d.quantity);
+			
+		printf ("\nEnter drug price\n");
+		scanf("%d", &d.price);
+		fseek(fp, -size, SEEK_CUR);
+		fwrite(&d, size, 1, fp);
+		fclose(fp);
+		
+		SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		printf ("Drug modified succussfully");
+		SetConsoleTextAttribute(hConsole, originalAttributes);
+		
+		system("pause");
+		menuOptions();
+		}
+		else{
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
+			printf ("sorry, the ID cannot be found\n");
+			SetConsoleTextAttribute(hConsole, originalAttributes);
+			
+			system ("pause");
+			menuOptions();
+		}
+		
+	}
+}
 
+void deleteDrug(){
+	
+}
 void loginHistory(){
 	
 }
