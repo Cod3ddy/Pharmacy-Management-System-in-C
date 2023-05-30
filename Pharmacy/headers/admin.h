@@ -471,7 +471,69 @@ void modifyDrug(){
 }
 
 void deleteDrug(){
+	system ("cls");
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+	WORD originalAttributes = consoleInfo.wAttributes;
 	
+	long int size = sizeof(d);
+	char drugID [10];
+	int searchFlag = 0;
+	int deFlag = 0;
+	printf ("Enter drug ID\n");
+	scanf ("%s", drugID);
+	
+	FILE *delp, *fp, *open;
+		delp = fopen("files/pharmacy.txt", "rb");
+		if(delp == NULL){
+			printf("something went wrong\n");
+			exit(0);
+		}else{
+			while(fread(&d, size, 1, delp) != 0){
+				if(strcmp(d.drugId, drugID) == 0){
+					searchFlag = 1;
+					break;
+				}
+			}
+			if (searchFlag == 1){
+				open =fopen("files/pharmacy.txt", "rb");
+				fp = fopen ("files/temp.txt", "wb");
+				
+				if (fp == NULL || open == NULL){
+					printf ("Something went wrong\n");
+					exit(0);
+				}else{
+					while(fread(&d, size, 1, open) !=0){
+						if(strcmp(drugID, d.drugId) !=0){
+							printf("To be copied %s\n", d.drugName);
+							fwrite(&d, size, 1, fp);
+							deFlag = 1;
+						}
+					}
+					if(deFlag == 1){
+						printf ("Deleted successfully\n");
+						system("pause");
+								
+						menuOptions();
+					}else{
+						printf("Failed to delete record\n");
+						system("pause");
+						menuOptions();
+					}
+				}
+			}
+			else{
+				printf ("sorry, drug not found\n");
+				system("pause");
+				menuOptions();
+			}
+		}
+	fclose(fp);
+	fclose(open);
+	fclose(delp);
+	remove("files/pharmacy.txt");
+	rename("files/temp.txt", "files/pharmacy.txt");			
 }
 void loginHistory(){
 	
