@@ -484,7 +484,7 @@ void deleteDrug(){
 	printf ("Enter drug ID\n");
 	scanf ("%s", drugID);
 	
-	FILE *delp, *fp, *open;
+	FILE *delp, *fp, *op;
 		delp = fopen("files/pharmacy.txt", "rb");
 		if(delp == NULL){
 			printf("something went wrong\n");
@@ -497,14 +497,14 @@ void deleteDrug(){
 				}
 			}
 			if (searchFlag == 1){
-				open =fopen("files/pharmacy.txt", "rb");
+				op =fopen("files/pharmacy.txt", "rb");
 				fp = fopen ("files/temp.txt", "wb");
 				
 				if (fp == NULL || open == NULL){
 					printf ("Something went wrong\n");
 					exit(0);
 				}else{
-					while(fread(&d, size, 1, open) !=0){
+					while(fread(&d, size, 1, op) !=0){
 						if(strcmp(drugID, d.drugId) !=0){
 							printf("To be copied %s\n", d.drugName);
 							fwrite(&d, size, 1, fp);
